@@ -105,15 +105,15 @@ def insert_company_profiles_to_postgres(profiles, connection_params):
         print.error("Error connecting to PostgreSQL database: %s", e)
         raise   
 if __name__ == "__main__" :
-    company_file_path = 'data/us_person_profile.txt'
+    company_file_path = 'data_processing/data/united_states_companies.txt'
     company_profiles = read_profiles_from_file(company_file_path)
 
-    password = open("secrets/password.pem", "r").read().strip()
+    password = open("data_processing/secrets/password.pem", "r").read().strip()
     connection_params = {
             "sslmode": "verify-ca",
-            "sslrootcert": "secrets/server-ca.pem",
-            "sslcert": "secrets/client-cert.pem",
-            "sslkey": "secrets/client-key.pem",
+            "sslrootcert": "data_processing/secrets/server-ca.pem",
+            "sslcert": "data_processing/secrets/client-cert.pem",
+            "sslkey": "data_processing/secrets/client-key.pem",
             "hostaddr": "34.30.107.254",
             "port": "5432",
             "user": "postgres",

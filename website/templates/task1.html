@@ -2,11 +2,29 @@
 {% block content %}
 <html>
     <head>
-       
+        <script src="/static/js/taskOneScripts.js"></script>
+        <link rel="stylesheet" href="/static/css/taskOneStyles.css">
+        <title>Task 1- Technical Hackathon - </title>
     </head>
     <h1>Task 1 Page </h1>
-    <body>
-       Stuff
-    </body>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Search...">
+        <button id="search-button">Search</button>
+    </div>
+    <div class="results-container">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Profile ID</th>
+                    <th>Name</th>
+                    <th>Industry</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="loading-icon" style="display:none;">Loading...</div>
+    </div>
+    
 </html>
 {% endblock %}

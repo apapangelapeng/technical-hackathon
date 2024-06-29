@@ -36,5 +36,27 @@ def taskTwoPage():
 def taskThreePage():
     return render_template('task3.html')
 
+@app.route('/taskOneSearch', methods=['POST'])
+def taskOneSearch():
+    data = request.json
+    query = data['query']
+    print(query)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    search_query = """
+    SELECT id, name, industry, description
+    FROM company_profiles
+    WHERE to_tsvector('english', name || ' ' || industry || ' ' || description) @@ plainto_tsquery(%s);
+    """
+    cursor.execute(search_query, (query,))
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    profiles = [{'id': r[0], 'name': r[1], 'industry': r[2], 'description': r[3]} for r in results]
+    print(f"found {len(profiles)} results")
+    print(results)
+    return jsonify(results=profiles)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,37 @@
+:root {
+    --light-pink: #c09bac;
+    --dark-green: #314021;
+    --medium-green: #617246;
+    --dark-gray: #0c0d07;
+    --light-beige: #d8c6ba;
+    --highlight-yellow: #fff9c4;
+}
+.navbar {
+    background-color: var(--dark-green);
+}
+
+.navbar-brand, .nav-link {
+    color: var(--light-beige) !important;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.nav-link:hover {
+    color: var(--highlight-yellow) !important;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    
+    margin: 0;
+    padding: 20px;
+    background-color: var(--light-beige);
+    color: var(--dark-gray);
+}
+.highlight {
+    background-color: var(--highlight-yellow);
+    font-weight: bold;
+}
