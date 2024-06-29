@@ -26,6 +26,15 @@ def get_db_connection():
 @app.route('/')
 def index():
     return render_template('index.html')
+@app.route('/task_1')
+def taskOnePage():
+    return render_template('task1.html')
+@app.route('/task_2')
+def taskTwoPage():
+    return render_template('task2.html')
+@app.route('/task_3')
+def taskThreePage():
+    return render_template('task3.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
