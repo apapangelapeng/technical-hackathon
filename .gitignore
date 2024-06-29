@@ -1,0 +1,7 @@
+.DS_Store
+client-cert.pem
+client-key.pem
+server-ca.pem
+data/.DS_Store
+data/united_states_companies.txt
+data/us_person_profile.txt
