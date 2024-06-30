@@ -3,10 +3,13 @@
 <html>
     <head>
         <script src="/static/js/taskOneScripts.js"></script>
-        <link rel="stylesheet" href="/static/css/taskOneStyles.css">
+        <link rel="stylesheet" href="/static/css/searchStyles.css">
         <title>Task 1- Technical Hackathon - </title>
     </head>
     <h1>Task 1 Page </h1>
+    <div class="short-intro-box">
+        This page does a simple word match to retrive user result
+    </div>
     <div class="search-container">
         <input type="text" id="search-box" placeholder="Search...">
         <button id="search-button">Search</button>
@@ -23,7 +26,9 @@
             </thead>
             <tbody></tbody>
         </table>
-        <div id="loading-icon" style="display:none;">Loading...</div>
+        <div id="loading-status" style="display:none;">Loading...</div>
+        <div id="loading-icon" style="display:none;">🔄</div>
+
     </div>
     
 </html>

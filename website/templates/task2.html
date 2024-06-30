@@ -2,11 +2,33 @@
 {% block content %}
 <html>
     <head>
-       
+        <script src="/static/js/taskTwoScripts.js"></script>
+        <link rel="stylesheet" href="/static/css/searchStyles.css">
+        <title>Task 2- Technical Hackathon - </title>
     </head>
     <h1>Task 2 Page </h1>
-    <body>
-       Stuff
-    </body>
+    <div class="short-intro-box">
+        This page utilize vecotrization of the data to find top 10 most similar result to the given input
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Search...">
+        <button id="search-button">Search</button>
+    </div>
+    <div class="results-container">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Profile ID</th>
+                    <th>Company Name</th>
+                    <th>Industry</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="loading-status" style="display:none;">Loading...</div>
+        <div id="loading-icon" style="display:none;">🔄</div>
+    </div>
+    
 </html>
 {% endblock %}

@@ -71,7 +71,7 @@ $(document).ready(function() {
             handleSearchResponse(mockResponse, query);
         } else {
             $.ajax({
-                url: '/taskOneSearch',
+                url: '/taskTwoSearch',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ query: query }),

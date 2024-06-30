@@ -1,6 +1,5 @@
 import json
 import psycopg2
-import logging
 from tqdm import tqdm
 
 def read_profiles_from_file(file_path):

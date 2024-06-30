@@ -2,11 +2,33 @@
 {% block content %}
 <html>
     <head>
-       
+        <script src="/static/js/taskThreeScripts.js"></script>
+        <link rel="stylesheet" href="/static/css/searchStyles.css">
+        <title>Task 3- Technical Hackathon - </title>
     </head>
     <h1>Task 3 Page </h1>
-    <body>
-       Stuff
-    </body>
+    <div class="short-intro-box">
+        On this page, the user input normal everyday english to describe what they want to accomplish, then GPT will do the work of generating the correct query to retrive optimal result.
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-box" placeholder="Search...">
+        <button id="search-button">Search</button>
+    </div>
+    <div class="results-container">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Profile ID</th>
+                    <th>Company Name</th>
+                    <th>Industry</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="loading-status" style="display:none;">Loading...</div>
+        <div id="loading-icon" style="display:none;">🔄</div>
+    </div>
+    
 </html>
 {% endblock %}

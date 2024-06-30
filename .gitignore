@@ -2,3 +2,4 @@
 data/.DS_Store
 data_processing/data/*
 data_processing/secrets/*
+data_processing/output.txt
