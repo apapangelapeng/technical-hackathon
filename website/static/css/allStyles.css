@@ -35,3 +35,18 @@ body {
     background-color: var(--highlight-yellow);
     font-weight: bold;
 }
+button {
+    padding: 15px 30px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--medium-green);
+    color: var(--light-beige);
+    border: 2px solid var(--medium-green);
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+    background-color: var(--light-pink);
+    color: var(--dark-gray);
+}

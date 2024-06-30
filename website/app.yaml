@@ -1,0 +1,14 @@
+runtime: python39  # or python38, depending on your Python version
+entrypoint: gunicorn -b :$PORT main:app
+
+env_variables:
+  SSL_ROOT_CERT: "server-ca.pem"
+  SSL_CERT: "client-cert.pem"
+  SSL_KEY: "client-key.pem"
+  OPENAI_API_KEY: "open-ai-key.pem"
+  DB_PASSWORD: "password.pem"
+
+handlers:
+- url: /.*
+  script: auto
+

@@ -67,6 +67,7 @@ $(document).ready(function() {
                 ]
             };
             $('#loading-icon').hide();
+$('#loading-status').hide();
             stopLoading();
             handleSearchResponse(mockResponse, query);
         } else {
@@ -77,6 +78,7 @@ $(document).ready(function() {
                 data: JSON.stringify({ query: query }),
                 success: function(response) {
                     $('#loading-icon').hide();
+$('#loading-status').hide();
                     stopLoading();
                     handleSearchResponse(response, query);
                 }

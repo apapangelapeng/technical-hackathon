@@ -1,0 +1,7 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+psycopg2-binary==2.9.9
+openai==1.35.7
+firebase-admin==6.5.0
+google-cloud-firestore==2.16.1
+gunicorn==22.0.0

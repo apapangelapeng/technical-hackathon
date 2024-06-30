@@ -45,6 +45,8 @@ $(document).ready(function() {
     });
 
     function performSearch() {
+        let resultText = $('#result-text');
+        resultText.empty();  // Clear previous text
         let query = $('#search-box').val();
         if (query.trim() === '') {
             alert('Please enter a search term.');
@@ -62,11 +64,14 @@ $(document).ready(function() {
             // Mock response for testing so I don't keep calling and connecting to db and wasting $$
             let mockResponse = {
                 results: [
-                    { id: 1, name: 'Mock Company A', industry: 'Technology', description: 'Leading technology company Mock' },
-                    { id: 2, name: 'Mock Company B', industry: 'Healthcare Mock', description: 'Innovative healthcare mock solutions' }
+                    { id: 1, name: 'Mock Company A', industry: 'Technology', description: 'Leading technology company Mock', gpt_response: 'GPT Response for Mock Company A' },
+                    { id: 2, name: 'Mock Company B', industry: 'Healthcare Mock', description: 'Innovative healthcare mock solutions', gpt_response: 'GPT Response for Mock Company B' }
                 ]
             };
+            console.log("in mock, about to stop loading")
             $('#loading-icon').hide();
+            $('#loading-status').hide();
+            
             stopLoading();
             handleSearchResponse(mockResponse, query);
         } else {
@@ -75,20 +80,24 @@ $(document).ready(function() {
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ query: query }),
-                success: function(response) {
+                success: function(response,explanation) {
                     $('#loading-icon').hide();
+                    $('#loading-status').hide();
                     stopLoading();
-                    handleSearchResponse(response, query);
+                    handleSearchResponse(response,explanation, query);
                 }
             });
         }
     }
 
-    function handleSearchResponse(response, query) {
+    function handleSearchResponse(response,explanation, query) {
         let tableBody = $('#results-table tbody');
         tableBody.empty();
+        let resultText = $('#result-text');
+        resultText.empty();  // Clear previous text
         if (response.results.length === 0) {
             tableBody.append('<tr><td colspan="4">No results found.</td></tr>');
+            resultText.text('No results found.');
         } else {
             response.results.forEach(profile => {
                 let row = `<tr>
@@ -98,7 +107,9 @@ $(document).ready(function() {
                     <td>${profile.description}</td>
                 </tr>`;
                 tableBody.append(row);
+               
             });
+            resultText.append(`<p><strong>Explanation:</strong> ${response.explanation}</p>`);
             highlightMatches(query);
         }
     }

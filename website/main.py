@@ -3,31 +3,71 @@ import psycopg2
 from openai import OpenAI
 import json
 import os
+import firebase_admin
+from firebase_admin import credentials, storage
+import atexit
+import shutil
+import stat
 
-## parts to dynamically get the pem file
-current_dir = os.path.dirname(os.path.abspath(__file__))
-pem_file_path = os.path.join(current_dir, 'functions/secrets')
-pem_file_path = os.path.join(pem_file_path, '')
-## 
 
-client = OpenAI(api_key=open(f"{pem_file_path}open-ai-key.pem", "r").read().strip())
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate("technical-hackathon-firebase-adminsdk-tzghq-e6b98ccad8.json")
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'technical-hackathon.appspot.com'
+})
 
+bucket = storage.bucket()
+
+# Temporary directory for storing downloaded files
+temp_dir = "/tmp/firebase_downloads"
+os.makedirs(temp_dir, exist_ok=True)
+
+def get_file_from_firebase(filename):
+    blob = bucket.blob(f"secrets/{filename}")
+    local_path = os.path.join(temp_dir, filename)  # Use temp_dir for temporary storage
+    blob.download_to_filename(local_path)
+    print(f"Downloaded {filename} from Firebase Storage to {local_path}")
+    # update permission
+    os.chmod(local_path, stat.S_IRUSR | stat.S_IWUSR)
+    return local_path
+
+# Correctly assign the OpenAI API key
+
+client = OpenAI(api_key=open(get_file_from_firebase("open-ai-key.pem")).read().strip())
+password = open(get_file_from_firebase("password.pem"),"r").read().strip()
 app = Flask(__name__)
 
 # Set up database connection
-password = open(f"{pem_file_path}password.pem", "r").read().strip()
+sslrootcert_path = get_file_from_firebase("server-ca.pem")
+sslcert_path = get_file_from_firebase("client-cert.pem")
+sslkey_path = get_file_from_firebase("client-key.pem")
+
 connection_params = {
     "sslmode": "verify-ca",
-    "sslrootcert": f"{pem_file_path}server-ca.pem",
-    "sslcert": f"{pem_file_path}client-cert.pem",
-    "sslkey": f"{pem_file_path}client-key.pem",
+    "sslrootcert": sslrootcert_path,
+    "sslcert": sslcert_path,
+    "sslkey": sslkey_path,
     "hostaddr": "34.30.107.254",
     "port": "5432",
     "user": "postgres",
     "dbname": "postgres",
-    "user": "postgres",
-    "password" : password
+    "password": password
 }
+
+
+# Load table schemas
+table_schema_path = get_file_from_firebase("table_schema.json")
+with open(table_schema_path, 'r') as file:
+    table_schema_content = file.read()
+    print(f"Content of table_schema.json: {table_schema_content}")  # Debug: Print file contents to ensure correctness
+
+try:
+    table_schemas = json.loads(table_schema_content)
+except json.JSONDecodeError as e:
+    print(f"Failed to decode JSON from table_schema.json: {e}")
+    table_schemas = {}
+
+
 
 def get_db_connection():
     conn = psycopg2.connect(**connection_params)
@@ -75,6 +115,7 @@ def taskTwoSearch():
     query = data['query']
 
     # Get query embedding
+    #query_embedding_response = openai.embeddings.create(input=query, model="text-embedding-ada-002")
     query_embedding_response = client.embeddings.create(input=query, model="text-embedding-ada-002")
     query_embedding = query_embedding_response.data[0].embedding
 
@@ -116,12 +157,6 @@ def taskTwoSearch():
 
 ### following code for task 3
 
-table_schemas = {}
-# Table schemas
-with open(f"{pem_file_path}table_schema.json", "r") as file:
-    table_schemas = json.load(file)
-
-
 
 
 ## ask for the db query , given the scheme provided
@@ -149,6 +184,27 @@ def generate_db_query(natural_language_query, table_schemas):
     
     # return query
 
+def get_explanation(db_response,natural_language_query):
+    
+    prompt = f"given the question asked {natural_language_query}, and the response from the database {db_response}. Can you please explain in simple words what the answer is?"
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are an expert database assistant who is very good at explaning what the data mean"},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150,
+        temperature=0
+    )
+    
+    answer = response.choices[0].message.content.strip()
+    print(answer)
+    return answer
+    # query =  "SELECT * FROM company_profiles \nWHERE company_size_start=10;"
+    
+    # return query
+
 
 def execute_db_query(cursor, sql_query):
     cursor.execute(sql_query)
@@ -166,6 +222,7 @@ def process_natural_language_query( natural_language_query, table_schemas):
 
         result = execute_db_query(cursor, sql_query)
         print("this is the result:", result)
+        
         return result
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -183,12 +240,19 @@ def task_three_search():
         return jsonify({'error': 'No query provided'}), 400
 
     results = process_natural_language_query(natural_language_query, table_schemas)
+    explanation = get_explanation(results,natural_language_query)
     if results is None:
         return jsonify({'error': 'An error occurred while processing the query'}), 500
 
-    return jsonify(results=results)
+    return jsonify(results=results, explanation = explanation)
 
+# Cleanup function to remove temporary files
+def cleanup():
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
+        print(f"Cleaned up temporary directory {temp_dir}")
 
+atexit.register(cleanup)
 
 if __name__ == '__main__':
     app.run(debug=True)
