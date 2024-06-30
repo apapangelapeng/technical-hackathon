@@ -1,5 +1,18 @@
 $(document).ready(function() {
+
     $('#search-button').click(function() {
+        //click search
+        performSearch();
+    });
+
+    $('#search-box').keypress(function(event) {
+        //enter also search
+        if (event.which === 13) {
+            performSearch();
+        }
+    });
+
+    function performSearch() {
         let query = $('#search-box').val();
         if (query.trim() === '') {
             alert('Please enter a search term.');
@@ -11,7 +24,7 @@ $(document).ready(function() {
         let tableBody = $('#results-table tbody');
         tableBody.empty();  // Clear previous search results
         if (query.toLowerCase() === 'mock') {
-            // Mock response for testing
+            // Mock response for testing so i dont keep calling and connecting to db and wasting $$
             let mockResponse = {
                 results: [
                     { id: 1, name: 'Mock Company A', industry: 'Technology', description: 'Leading technology company Mock' },
@@ -32,8 +45,8 @@ $(document).ready(function() {
                 }
             });
         }
-    });
 
+    }
     function handleSearchResponse(response, query) {
         let tableBody = $('#results-table tbody');
         tableBody.empty();
